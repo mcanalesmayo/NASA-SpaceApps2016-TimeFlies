@@ -64,8 +64,7 @@ public class DataExtractor {
 		String dewpoint_c = "";
 		String wind_dir_degrees = "";
 		String wind_speed_kt = "";
-		String visibility_statute_mi = "";
-		String altim_in_hg = "";
+	//	String visibility_statute_mi = "";
 		String sky_cover = "";
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -87,10 +86,8 @@ public class DataExtractor {
 						sky_cover = node.getNodeValue();
 					} else {
 
-						if (eElement.getNodeName().contains("altim_in_hg"))
-							altim_in_hg = eElement.getFirstChild().getNodeValue();
-						if (eElement.getNodeName().contains("visibility_statute_mi"))
-							visibility_statute_mi = eElement.getFirstChild().getNodeValue();
+					/*	if (eElement.getNodeName().contains("visibility_statute_mi"))
+							visibility_statute_mi = eElement.getFirstChild().getNodeValue();*/
 						if (eElement.getNodeName().contains("wind_speed_kt"))
 							wind_speed_kt = eElement.getFirstChild().getNodeValue();
 						if (eElement.getNodeName().contains("wind_speed_kt"))
@@ -111,7 +108,7 @@ public class DataExtractor {
 		}
 
 		WeatherDate nuevaDate = new WeatherDate(temp_c, dewpoint_c, wind_dir_degrees, wind_speed_kt,
-				visibility_statute_mi, altim_in_hg, sky_cover);
+				/*visibility_statute_mi,*/ sky_cover);
 
 		return nuevaDate;
 	}
@@ -242,7 +239,7 @@ public class DataExtractor {
 
 				try {
 					pw.println(retraso + " " + data.temp_c + " " + data.dewpoint_c + " " + data.wind_dir_degrees + " "
-							+ "" + data.wind_speed_kt + " " + data.visibility_statute_mi + " " + data.altim_in_hg + " "
+							+ "" + data.wind_speed_kt + " " /*+ data.visibility_statute_mi*/ + " "
 							+ data.sky_cover );
 				} catch (Exception e) {
 					logger.info(e.getMessage());

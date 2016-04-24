@@ -5,21 +5,18 @@ public class WeatherDate {
 	String dewpoint_c = "";
 	String wind_dir_degrees = "";
 	String wind_speed_kt = "";
-	String visibility_statute_mi = "";
-	String altim_in_hg = "";
+//	String visibility_statute_mi = "";
 	String sky_cover = "";
 
 	public WeatherDate(String temp_c, String dewpoint_c, String wind_dir_degrees, String wind_speed_kt,
-			String visibility_statute_mi, String altim_in_hg, String sky_cover) {
+			/*String visibility_statute_mi,*/ String sky_cover) {
 		super();
 		this.temp_c = temp_c;
 		this.dewpoint_c = dewpoint_c;
 		this.wind_dir_degrees = wind_dir_degrees;
 		this.wind_speed_kt = wind_speed_kt;
-		this.visibility_statute_mi = visibility_statute_mi;
-		this.altim_in_hg = altim_in_hg;
+	/*	this.visibility_statute_mi = visibility_statute_mi;*/
 		this.sky_cover = sky_cover;
-		this.flight_categor = flight_categor;
 	}
 
 	public WeatherDate() {
@@ -57,7 +54,7 @@ public class WeatherDate {
 	public void setWind_speed_kt(String wind_speed_kt) {
 		this.wind_speed_kt = wind_speed_kt;
 	}
-
+/*
 	public String getVisibility_statute_mi() {
 		return visibility_statute_mi;
 	}
@@ -65,14 +62,7 @@ public class WeatherDate {
 	public void setVisibility_statute_mi(String visibility_statute_mi) {
 		this.visibility_statute_mi = visibility_statute_mi;
 	}
-
-	public String getAltim_in_hg() {
-		return altim_in_hg;
-	}
-
-	public void setAltim_in_hg(String altim_in_hg) {
-		this.altim_in_hg = altim_in_hg;
-	}
+*/
 
 	public String getSky_cover() {
 		return sky_cover;
