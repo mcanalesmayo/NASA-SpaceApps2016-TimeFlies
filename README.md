@@ -20,6 +20,9 @@ The client interface has been build using the following technologies:
 * Bootstrap
 * Javascript & JQuery
 
+## Notes
+The python project has been included in this project. It's the _predictor_ folder
+
 Help/Examples:
 * https://www.aviationweather.gov/adds/metars
 * https://www.aviationweather.gov/static/adds/metars/stations.txt
