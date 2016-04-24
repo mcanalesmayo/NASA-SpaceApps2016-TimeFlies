@@ -176,6 +176,7 @@
           }
         }
 
+        var url;
         function sendData(){
           if(checkDate()){
             if(checkTime()){
@@ -183,7 +184,7 @@
                 console.log("GO");
                 var offsetH = document.getElementById('time').value.substring(0,2) - d.getHours();
                 var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate();
-                var url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
+                url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
                 console.log(url);
                 loadChart();
                 //x.innerHTML = url;
@@ -220,32 +221,28 @@
         }
 
         function initChart() {
-          var data = google.visualization.arrayToDataTable([
-            ['Element', 'Density', { role: 'style' }],
-            ['0min', 0.3, '#33cc33'],            // RGB value
-            ['Silver', 0.2, 'silver'],            // English color name
-            ['Gold', 0.05, 'gold'],
-            ['+60min', 0.45, 'color: #ff0000' ], // CSS-style declaration
-          ]);
-          var view = new google.visualization.DataView(data);
-          view.setColumns([0, 1,
-            { calc: "stringify",
-            sourceColumn: 1,
-            type: "string",
-            role: "annotation" },
-            2]);
-            var options = {
-              title: "Minutes of delay , in %",
-              width: '100%',
-              height: '100%',
-              bar: {groupWidth: "70%"},
-              legend: { position: "none" },
-              hAxis: {
-                format: 'percent'
-              },
-              backgroundColor: { fill:'#ffffff' }
-            };
-            drawChart(view, options)
+	       	$.getJSON(url, function(data){
+ 	            data.unshift(['Element', 'Density', { role: 'style' }]);
+ 	           var view = new google.visualization.DataView(data);
+ 	          	view.setColumns([0, 1,
+ 	            { calc: "stringify",
+ 	            sourceColumn: 1,
+ 	            type: "string",
+ 	            role: "annotation" },
+ 	            2]);
+ 	            var options = {
+ 	              title: "Minutes of delay , in %",
+ 	              width: '100%',
+ 	              height: '100%',
+ 	              bar: {groupWidth: "70%"},
+ 	              legend: { position: "none" },
+ 	              hAxis: {
+ 	                format: 'percent'
+ 	              },
+ 	              backgroundColor: { fill:'#ffffff' }
+ 	            };
+ 	            drawChart(view, options);
+ 	          });
           }
 
           function drawChart(view, options) {

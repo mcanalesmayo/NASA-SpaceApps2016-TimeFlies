@@ -38,4 +38,7 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
     compile 'commons-validator:commons-validator:1.5.0'
     compile 'com.google.guava:guava:19.0'
+
+    compile 'com.github.dvdme:ForecastIOLib:1.5.5'
+    compile files('lib/jaunt1.1.6.jar')
 }

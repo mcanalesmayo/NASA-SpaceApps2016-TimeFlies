@@ -1,15 +1,12 @@
 package sv.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
-@PropertySource(value = { "classpath:network.properties" })
+@EnableAsync
+@EnableScheduling
 public class MainConfiguration {
-	
-	@Value("${predictor.host}")
-	public static String PREDICTOR_HOST;
-	@Value("${predictor.host}")
-	public static int PREDICTOR_PORT;
+
 }

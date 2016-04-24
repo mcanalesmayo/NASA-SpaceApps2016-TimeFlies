@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,8 +23,6 @@ import com.jaunt.Elements;
 import com.jaunt.UserAgent;
 
 public class DataExtractor {
-
-	private static Logger logger = LoggerFactory.getLogger(DataExtractor.class);
 
 	public static void main(String[] args) {
 
@@ -64,7 +60,7 @@ public class DataExtractor {
 		String dewpoint_c = "";
 		String wind_dir_degrees = "";
 		String wind_speed_kt = "";
-	//	String visibility_statute_mi = "";
+		// String visibility_statute_mi = "";
 		String sky_cover = "";
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -86,10 +82,6 @@ public class DataExtractor {
 						sky_cover = node.getNodeValue();
 					} else {
 
-					/*	if (eElement.getNodeName().contains("visibility_statute_mi"))
-							visibility_statute_mi = eElement.getFirstChild().getNodeValue();*/
-						if (eElement.getNodeName().contains("wind_speed_kt"))
-							wind_speed_kt = eElement.getFirstChild().getNodeValue();
 						if (eElement.getNodeName().contains("wind_speed_kt"))
 							wind_speed_kt = eElement.getFirstChild().getNodeValue();
 						if (eElement.getNodeName().contains("wind_dir_degrees"))
@@ -101,16 +93,30 @@ public class DataExtractor {
 					}
 
 				} catch (Exception e) {
-					logger.info(e.getMessage());
+					System.err.println(e.getMessage());
+
 				}
 
 			}
 		}
-
-		WeatherDate nuevaDate = new WeatherDate(temp_c, dewpoint_c, wind_dir_degrees, wind_speed_kt,
-				/*visibility_statute_mi,*/ sky_cover);
-
-		return nuevaDate;
+		Double temp_roc = Double.valueOf(temp_c) - Double.valueOf(dewpoint_c);
+		String cloud = "1";
+		if (sky_cover.contains("CLR")) {
+			cloud = "0";
+		}
+		if (sky_cover.contains("SKC")) {
+			cloud = "0";
+		}
+		if (sky_cover.contains("SCT")) {
+			cloud = "0.4";
+		}
+		if (sky_cover.contains("FEW")) {
+			cloud = "0.2";
+		}
+		if (sky_cover.contains("BKN")) {
+			cloud = "0.7";
+		}
+		return new WeatherDate(wind_speed_kt, String.valueOf(temp_roc), cloud);
 	}
 
 	public static void writeData(PrintWriter pw, String station, String stationVisit, String zoneid,
@@ -160,7 +166,7 @@ public class DataExtractor {
 						Integer horaSalidaReal = Integer.valueOf(hora);
 						if (horaSalidaReal <= currentHour) {
 							// si la hora que ha salido o va a salir es la hora
-							// actual o menor, se peude añadir para
+							// actual o menor, se peude anadir para
 							// aprendizaje
 							horas.add(siguienteHora);
 						}
@@ -238,15 +244,16 @@ public class DataExtractor {
 				}
 
 				try {
-					pw.println(retraso + " " + data.temp_c + " " + data.dewpoint_c + " " + data.wind_dir_degrees + " "
-							+ "" + data.wind_speed_kt + " " /*+ data.visibility_statute_mi*/ + " "
-							+ data.sky_cover );
+					pw.println(retraso + " " + data.wind_speed_kt + " " + data.temp_cMinusDewPoint + " "
+							+ data.sky_cover + " ");
 				} catch (Exception e) {
-					logger.info(e.getMessage());
+					System.err.println(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.err.println(e.getMessage());
+
 		}
 	}
 }
