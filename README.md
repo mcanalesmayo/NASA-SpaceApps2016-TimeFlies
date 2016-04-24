@@ -21,6 +21,10 @@ The client interface has been build using the following technologies:
 * Bootstrap
 * Javascript & JQuery
 
+## Slides
+http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza
+
+
 ## Notes
 The python project has been included in this project. It's the _predictor_ folder
 
