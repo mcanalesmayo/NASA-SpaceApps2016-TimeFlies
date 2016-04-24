@@ -27,7 +27,7 @@ import com.jaunt.UserAgent;
 public class DataExtractor {
 
 	private static Logger logger = LoggerFactory.getLogger(DataExtractor.class);
-	
+
 	public static void main(String[] args) {
 
 		PrintWriter pw = null;
@@ -67,7 +67,6 @@ public class DataExtractor {
 		String visibility_statute_mi = "";
 		String altim_in_hg = "";
 		String sky_cover = "";
-		String flight_categor = "";
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -87,8 +86,7 @@ public class DataExtractor {
 						Node node = eElement.getAttributes().getNamedItem("sky_cover");
 						sky_cover = node.getNodeValue();
 					} else {
-						if (eElement.getNodeName().contains("flight_categor"))
-							flight_categor = eElement.getFirstChild().getNodeValue();
+
 						if (eElement.getNodeName().contains("altim_in_hg"))
 							altim_in_hg = eElement.getFirstChild().getNodeValue();
 						if (eElement.getNodeName().contains("visibility_statute_mi"))
@@ -113,7 +111,7 @@ public class DataExtractor {
 		}
 
 		WeatherDate nuevaDate = new WeatherDate(temp_c, dewpoint_c, wind_dir_degrees, wind_speed_kt,
-				visibility_statute_mi, altim_in_hg, sky_cover, flight_categor);
+				visibility_statute_mi, altim_in_hg, sky_cover);
 
 		return nuevaDate;
 	}
@@ -245,7 +243,7 @@ public class DataExtractor {
 				try {
 					pw.println(retraso + " " + data.temp_c + " " + data.dewpoint_c + " " + data.wind_dir_degrees + " "
 							+ "" + data.wind_speed_kt + " " + data.visibility_statute_mi + " " + data.altim_in_hg + " "
-							+ data.sky_cover + " " + data.flight_categor);
+							+ data.sky_cover );
 				} catch (Exception e) {
 					logger.info(e.getMessage());
 				}

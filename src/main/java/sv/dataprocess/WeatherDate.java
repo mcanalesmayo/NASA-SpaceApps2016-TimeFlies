@@ -8,10 +8,9 @@ public class WeatherDate {
 	String visibility_statute_mi = "";
 	String altim_in_hg = "";
 	String sky_cover = "";
-	String flight_categor = "";
 
 	public WeatherDate(String temp_c, String dewpoint_c, String wind_dir_degrees, String wind_speed_kt,
-			String visibility_statute_mi, String altim_in_hg, String sky_cover, String flight_categor) {
+			String visibility_statute_mi, String altim_in_hg, String sky_cover) {
 		super();
 		this.temp_c = temp_c;
 		this.dewpoint_c = dewpoint_c;
@@ -83,12 +82,5 @@ public class WeatherDate {
 		this.sky_cover = sky_cover;
 	}
 
-	public String getFlight_categor() {
-		return flight_categor;
-	}
-
-	public void setFlight_categor(String flight_categor) {
-		this.flight_categor = flight_categor;
-	}
 
 }
