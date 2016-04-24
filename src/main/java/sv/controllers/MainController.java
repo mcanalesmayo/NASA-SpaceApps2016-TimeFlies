@@ -11,9 +11,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +47,7 @@ public class MainController {
 	private static final long FEED_FREQ = 3*60;
 	
 	private static final String[] PREDICTION_COLOR = { "#33cc33", "#ffff00", "#ff9933", "#ff5050"};
-	private static final String[] PREDICTION_PERIOD = { "0-15 min", "15-30 min", "30-60 min", ">60 min"};
+	private static final String[] PREDICTION_PERIOD = { "0-5 min", "5-30 min", "30-60 min", ">60 min"};
 	
 	/**
 	 * Predicts the delay of a flight
@@ -148,16 +145,12 @@ public class MainController {
 	 * @return Formatted data to return to the user
 	 */
 	public GraphData[] processPredictorResponse(String response){
+		logger.info(response);
 		GraphData[] res;
-		List<Double> resList = new ArrayList<Double>();
 		String[] resSplit = response.split(" ");
 		res = new GraphData[resSplit.length];
 		for(int i=0; i<resSplit.length; i++){
-			resList.add(Double.parseDouble(resSplit[i]));
-		}
-		Collections.sort(resList);
-		for(int i=0; i<resList.size(); i++){
-			res[i] = new GraphData(PREDICTION_PERIOD[i], PREDICTION_COLOR[i], resList.get(i));
+			res[i] = new GraphData(PREDICTION_PERIOD[i], PREDICTION_COLOR[i], Double.parseDouble(resSplit[i]));
 		}
 		return res;
 	}
