@@ -46,7 +46,7 @@ public class MainController {
 	// Each FEED_FREQ minutes the web server will provide new flights to the predictor
 	private static final long FEED_FREQ = 3*60;
 	
-	private static final String[] PREDICTION_COLOR = { "#33cc33", "#ffff00", "#ff9933", "#ff5050"};
+	private static final String[] PREDICTION_COLOR = { "#a6f655", "#f6f655", "#f6a655", "#f6605"};
 	private static final String[] PREDICTION_PERIOD = { "0-5 min", "5-30 min", "30-60 min", ">60 min"};
 	
 	/**
@@ -150,7 +150,7 @@ public class MainController {
 		String[] resSplit = response.split(" ");
 		res = new GraphData[resSplit.length];
 		for(int i=0; i<resSplit.length; i++){
-			res[i] = new GraphData(PREDICTION_PERIOD[i], PREDICTION_COLOR[i], Double.parseDouble(resSplit[i]));
+			res[i] = new GraphData(PREDICTION_PERIOD[i], PREDICTION_COLOR[i], (double) Math.round(Double.parseDouble(resSplit[i]) * 100d) / 100d);
 		}
 		return res;
 	}
@@ -163,8 +163,8 @@ public class MainController {
 	 * @throws IOException
 	 */
 	public void feedPredictor() throws UnknownHostException, IOException{
-		//File f = new File(DataExtractor.FILE_NAME);
-		//if (f.exists()) f.delete();
+		File f = new File(DataExtractor.FILE_NAME);
+		if (f.exists()) f.delete();
 		Socket predictorSocket = new Socket(PREDICTOR_HOST, PREDICTOR_PORT);
 		logger.info("Connected to the predictor");
 		PrintWriter output = new PrintWriter(predictorSocket.getOutputStream(), false);
@@ -174,8 +174,8 @@ public class MainController {
 		output.printf("%s", MainController.FEED_COMMAND);
 		output.flush();
 		// Data size
-		//int fileSize = DataExtractor.extractInfo();
-		int fileSize = countLines(DataExtractor.FILE_NAME);
+		int fileSize = DataExtractor.extractInfo();
+		//int fileSize = countLines(DataExtractor.FILE_NAME);
 		output.printf("%s", fromIntToString(fileSize));
 		output.flush();
 		// Data
