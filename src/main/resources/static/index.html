@@ -17,6 +17,10 @@
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <link href="css/_custom.css" rel="stylesheet">
 
+  <!-- Autocomplete -->
+  <script src="//<a href="http://www.jqueryscript.net/tags.php?/map/">map</a>s.googleapis.com/maps/api/js?libraries=places"></script>
+  <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
   <!--[if lt IE 9]>
   <script src="js/html5shiv.js"></script>
@@ -187,7 +191,7 @@
             if(checkTime()){
               if(lat && lon){
                 var offsetH = document.getElementById('time').value.substring(0,2) - d.getHours();
-                var offsetDM = document.getElementById('date').value.substring(5,7) - d.getMonth();
+                var offsetDM = document.getElementById('date').value.substring(5,7) - (d.getMonth()+1);
                 var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate() + offsetDM*30;
                 url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
                 loadData();
@@ -207,7 +211,7 @@
 
         function loadChart(){
           initChart();
-          //Toogle responsive chart
+          //Toogle responsive Google Chart
           if (chartTriggers < 1){
 	          $(window).on("throttledresize", function (event) {
 	            initChart();
@@ -219,9 +223,10 @@
         	}
         }
 
+        //Load data from server
         function loadData(){
           $.getJSON(url, function(data){
-            var arr = [['Element', 'Density', { role: 'style' }]];
+            var arr = [['Minutes', 'Percentage', { role: 'style' }]];
             data.reverse();
             data.forEach(function(currEl){
             	arr.push([currEl.period, currEl.decNum, currEl.hexNum]);
@@ -231,6 +236,7 @@
           })
         };
 
+        //Paint chart
         function initChart() {
           var view = new google.visualization.DataView(dataTable);
           view.setColumns([0, 1,
