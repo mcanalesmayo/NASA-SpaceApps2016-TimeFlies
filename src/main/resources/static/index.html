@@ -2,8 +2,6 @@
 <html><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Script Eden ( http://scripteden.net/ ) Template Builder v2.0.0">
-  <!--pageMeta-->
 
   <!-- Loading Bootstrap -->
   <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -27,7 +25,6 @@
 
   <!--headerIncludes-->
 
-
   <style type="text/css"></style></head>
   <body>
     <div id="page" class="page">
@@ -39,21 +36,22 @@
               <div class="col-sm-10 col-sm-offset-1">
                 <div class="underlined-title">
                   <div class="editContent">
-                    <h1>Clear Take Off</h1>
+                    <h1>TimeFlies</h1>
                   </div>
                   <hr>
                   <div class="editContent">
-                    <h2>Feel free to fill the form and get your flight delay</h2>
+                    <h2>Clear For Take Off</h2>
                   </div>
                 </div>
                 <div class="editContent">
-                  <p>Cras mattis consectetur purus sit amet fermentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam porta sem malesuada magna mollis euismod. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia.</p>
+                  <p>Feel free to fill the form, enter details about your flight and get information of its possible delay.</p>
                 </div>
                 <div class="editContent">
                   <ul class="contact-info">
+                    <li>Made with <span class="fa fa-heart"></span> by SpaceApps Team</li>
                     <li><span class="fa fa-map-marker"></span> Etopía, Zaragoza</li>
                     <li><span class="fa fa-phone"></span> +34 123456789</li>
-                    <li><span class="fa fa-envelope"></span><a href="mailto:test@cleartakeoff.com"> test@cleartakeoff.com</a> </li>
+                    <li><span class="fa fa-envelope"></span><a href="mailto:test@clearfortakeoff.com"> test@clearfortakeoff.com</a> </li>
                   </ul>
                 </div>
 
@@ -65,9 +63,14 @@
                           <input type="text" value="" placeholder="City" class="form-control" id="city">
                         </div>
                       </div>
-                      <div class="col-sm-12">
+                      <div class="col-sm-6">
                         <div class="form-group">
-                          <input type="date" value="" placeholder="Date (YYYY-MM-DD)" class="form-control" data-date-format="DD MMMM YYYY" id="date">
+                          <input type="date" value="" placeholder="Date (YYYY-MM-DD)" class="form-control" id="date">
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <input type="time" value="" placeholder="Time (HH:MM)" class="form-control" data-date-format="HH:MM" id="time">
                         </div>
                       </div>
                     </div><!-- /.row -->
@@ -77,12 +80,16 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <a href="#" class="btn btn-primary btn-lg" onclick="sendData()">Send</a>
+                      <a class="btn btn-primary btn-lg" onclick="sendData()">Send</a>
                     </div>
                   </form>
                 </div><!-- /.form-container -->
+
+                <p id="demo"></p>
+
                 <div id="chart_wrap"><div id="chart"></div></div>
                 <p id="canvas_size"></p>
+
               </div><!-- /.col-sm-10 -->
             </div><!-- /.container -->
           </div><!-- /.container -->
@@ -105,17 +112,17 @@
         <script src="js/application.js"></script>
         <script src="js/over.js"></script>
         <script>
-        /*$(function(){
-          if( $('#nivoSlider').size() > 0 ) {
-            $('#nivoSlider').nivoSlider({
-              effect: 'random',
-              pauseTime: 5000
-            });
-          }
-        })*/
 
         var x = document.getElementById("msg");
         var ip = "http://10.10.11.37:8080/";
+        var lat;
+        var lon;
+        var d = new Date();
+
+        $(function myFunction() {
+          document.getElementById('date').value = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+          document.getElementById('time').value = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+        })
 
         $(function getLocation() {
           if (navigator.geolocation) {
@@ -125,18 +132,26 @@
           }
         })
         function showPosition(position) {
-          httpGet(position.coords.latitude,position.coords.longitude);
+          lat = position.coords.latitude;
+          lon = position.coords.longitude;
+          httpGet(lat,lon);
         }
 
         function httpGet(lat,lon){
           $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon, function(data)
           {
-            console.log(data.results[0].formatted_address);
-            document.getElementById('city').value=data.results[0].address_components[1].long_name;
+            var arrAddress = data.results[0].address_components;
+            // iterate through address_component array
+            $.each(arrAddress, function (i, address_component) {
+              if (address_component.types[0] == 'locality'){ // locality type
+                document.getElementById('city').value=address_component.long_name + " ("+lat + " , " + lon + ")";
+                return false; // break the loop
+              };
+            })
           });
         }
 
-        function checkForm(){
+        function checkDate(){
           // regular expression to match required date format
           //re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
           re2 = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -149,13 +164,40 @@
           }
         }
 
+        function checkTime(){
+          // regular expression to match required time format
+          re = /^\d{2}:\d{2}$/;
+          console.log(document.getElementById('time').value);
+          if (document.getElementById('time').value.match(re)){
+            return true;
+          }
+          else{
+            return false;
+          }
+        }
+
         function sendData(){
-          if(checkForm()){
-            console.log("GO");
-            var url = ip + "predict?city="+document.getElementById('city').value+"&date="+document.getElementById('date').value;
-            console.log(url);
-            x.innerHTML = url;
-            //request http://10.10.11.37:8080/predict?city=asd&date=DD-MM-YYYY
+          if(checkDate()){
+            if(checkTime()){
+              if(lat && lon){
+                console.log("GO");
+                var offsetH = document.getElementById('time').value.substring(0,2) - d.getHours();
+                var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate();
+                var url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
+                console.log(url);
+                loadChart();
+                //x.innerHTML = url;
+                //x.innerHTML = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon;
+                //request http://10.10.11.37:8080/predict?city=asd&date=DD-MM-YYYY
+              }
+              else{
+                console.log('Lay y Lon no existen');
+                x.innerHTML = "Enable location";
+              }
+            }
+            else{
+              x.innerHTML = "Invalid time format";
+            }
           }
           else{
             x.innerHTML = "Invalid date format";
@@ -163,24 +205,27 @@
         }
 
         google.load("visualization", "1", {
-            packages: ["corechart"]
+          packages: ["corechart"]
         });
-        google.setOnLoadCallback(initChart);
 
-        $(window).on("throttledresize", function (event) {
-            initChart();
-        });
-        $(window).resize(function(){
+        function loadChart(){
           initChart();
-        });
+          //Toogle responsive chart
+          $(window).on("throttledresize", function (event) {
+            initChart();
+          });
+          $(window).resize(function(){
+            initChart();
+          });
+        }
 
         function initChart() {
           var data = google.visualization.arrayToDataTable([
             ['Element', 'Density', { role: 'style' }],
-            ['Copper', 0.3, '#b87333'],            // RGB value
+            ['0min', 0.3, '#33cc33'],            // RGB value
             ['Silver', 0.2, 'silver'],            // English color name
             ['Gold', 0.05, 'gold'],
-            ['Platinum', 0.45, 'color: #e5e4e2' ], // CSS-style declaration
+            ['+60min', 0.45, 'color: #ff0000' ], // CSS-style declaration
           ]);
           var view = new google.visualization.DataView(data);
           view.setColumns([0, 1,
@@ -203,11 +248,11 @@
             drawChart(view, options)
           }
 
-        function drawChart(view, options) {
+          function drawChart(view, options) {
             var chart = new google.visualization.BarChart(document.getElementById('chart'));
             chart.draw(view, options);
-        }
+          }
 
-        </script>
+          </script>
 
-      </body></html>
+        </body></html>
