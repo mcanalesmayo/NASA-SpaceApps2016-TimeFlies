@@ -4,7 +4,7 @@
 
 * [Íñigo Alonso Ruiz](https://github.com/Shathe)
 * [Javier Beltrán Jorba](https://github.com/MrJavo94)
- * [Marcos Canales Mayo](https://github.com/MarcosCM) 
+* [Marcos Canales Mayo](https://github.com/MarcosCM) 
 * [Jorge Cáncer Gil](https://github.com/jorcox)
 * [Jorge Martínez Lascorz](https://github.com/JorgeCoke)
 
