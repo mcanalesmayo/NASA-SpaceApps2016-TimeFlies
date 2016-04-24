@@ -66,10 +66,6 @@ public class MainController {
 			
 			WeatherDate weatherDate = DataGetter.getTimeWheater(""+lon, ""+lat, offsetD, offsetH);
 			
-			logger.info(fromDoubleToString(Double.parseDouble(weatherDate.getWind_speed_kt())));
-			logger.info(fromDoubleToString(Double.parseDouble(weatherDate.getTemp_cMinusDewPoint())));
-			logger.info(fromDoubleToString(Double.parseDouble(weatherDate.getSky_cover())));
-			
 			// Command
 			output.printf("%s", MainController.PREDICT_COMMAND);
 			output.flush();

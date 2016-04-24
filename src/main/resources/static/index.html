@@ -115,12 +115,13 @@
 
         //Variables
         var x = document.getElementById("msg");
-        var ip = "http://10.10.11.37:8080/";
+        var ip = "http://127.0.0.1:8080/";
         var lat;
         var lon;
         var d = new Date();
         var url;
         var dataTable;
+        var chartTriggers = 0;
 
         //Load Google Chart
         google.load("visualization", "1", {
@@ -163,7 +164,6 @@
         function checkDate(){
           // regular expression to match required date format
           re2 = /^\d{4}-\d{1,2}-\d{1,2}$/;
-          console.log(document.getElementById('date').value);
           if (document.getElementById('date').value.match(re2)){
             return true;
           }
@@ -174,7 +174,6 @@
         function checkTime(){
           // regular expression to match required time format
           re = /^\d{2}:\d{2}$/;
-          console.log(document.getElementById('time').value);
           if (document.getElementById('time').value.match(re)){
             return true;
           }
@@ -191,12 +190,9 @@
                 var offsetDM = document.getElementById('date').value.substring(5,7) - d.getMonth();
                 var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate() + offsetDM*30;
                 url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
-                x.innerHTML = url;
                 loadData();
-                loadChart();
               }
               else{
-                console.log('Lay y Lon no existen');
                 x.innerHTML = "Enable location";
               }
             }
@@ -212,18 +208,26 @@
         function loadChart(){
           initChart();
           //Toogle responsive chart
-          $(window).on("throttledresize", function (event) {
-            initChart();
-          });
-          $(window).resize(function(){
-            initChart();
-          });
+          if (chartTriggers < 1){
+	          $(window).on("throttledresize", function (event) {
+	            initChart();
+	          });
+	          $(window).resize(function(){
+	            initChart();
+	          });
+	          chartTriggers = 1;
+        	}
         }
 
-        loadData(){
+        function loadData(){
           $.getJSON(url, function(data){
-            data.unshift(['Element', 'Density', { role: 'style' }]);
-            dataTable = data;
+            var arr = [['Element', 'Density', { role: 'style' }]];
+            data.reverse();
+            data.forEach(function(currEl){
+            	arr.push([currEl.period, currEl.decNum, currEl.hexNum]);
+            });
+            dataTable = google.visualization.arrayToDataTable(arr);
+            loadChart();
           })
         };
 
