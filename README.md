@@ -8,6 +8,26 @@
 * [Jorge Cáncer Gil](https://github.com/jorcox)
 * [Jorge Martínez Lascorz](https://github.com/JorgeCoke)
 
+## Description
+Our application predicts the likelihood of flight delays given the airport location, departure date and departure hour. Our system has two main nodes. We have a web server deployed using Spring Framework with a responsive design suitable for mobile devices. The magic happens in a Python calculation server implementing machine learning algorithms, which is able to estimate the probabilities of delaying.
+
+The application is constantly taking data from the internet and updating the bayesian model in order to keep learning forever.
+
+## Resources
+* Python
+* JavaEE
+* Spring Framework
+* Gradle
+* Forecast.io
+* NOAA (METAR)
+* National Weather Service
+* HTML5
+* CSS3
+* Bootstrap
+* JavaScript
+* Scikit Learn - Naive Bayes Clasification Multiclass
+
+
 ## Server side
 The server side has been built using the following technologies:
 * Web Server: JavaEE & Spring Framework
