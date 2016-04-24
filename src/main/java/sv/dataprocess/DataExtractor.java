@@ -2,6 +2,7 @@ package sv.dataprocess;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -22,18 +23,26 @@ import org.w3c.dom.NodeList;
 import com.jaunt.Elements;
 import com.jaunt.UserAgent;
 
+import sv.controllers.MainController;
+
 public class DataExtractor {
 
-	public static void main(String[] args) {
-
+	public static final String FILE_NAME = "Features.txt";
+	
+	/**
+	 * Extracts information about new flights and saves it to FILE_NAME
+	 * @return Size (bytes) of the file
+	 * @throws IOException 
+	 */
+	public static int extractInfo() throws IOException {
 		PrintWriter pw = null;
+		File f = new File(DataExtractor.FILE_NAME);
 		try {
-			if (new File("Features.txt").exists()) {
-				new File("Features.txt").delete();
+			if (f.exists()) {
+				f.delete();
 			}
-			pw = new PrintWriter(new FileWriter(new File("Features.txt")));
-		} catch (Exception a) {
-		}
+			pw = new PrintWriter(new FileWriter(f));
+		} catch (Exception e) {}
 		writeData(pw, "KJFK", "JFK", "America/New_York", "-0400");
 		writeData(pw, "KLAX", "LAX", "America/Los_Angeles", "-0700");
 		writeData(pw, "KMIA", "MIA", "America/Chicago", "-0500");
@@ -47,8 +56,10 @@ public class DataExtractor {
 		writeData(pw, "KDTW", "DTW", "America/New_York", "-0400");
 		writeData(pw, "KLAS", "LAS", "America/Los_Angeles", "-0700");
 		writeData(pw, "KPDX", "PDX", "America/Phoenix", "-0700");
-
+		
 		pw.close();
+		
+		return MainController.countLines(DataExtractor.FILE_NAME);
 	}
 
 	public static WeatherDate getInfo(URL url) throws Exception {
@@ -244,8 +255,8 @@ public class DataExtractor {
 				}
 
 				try {
-					pw.println(retraso + " " + data.wind_speed_kt + " " + data.temp_cMinusDewPoint + " "
-							+ data.sky_cover + " ");
+					pw.println(MainController.fromIntToString(retraso) + MainController.fromDoubleToString(Double.parseDouble(data.wind_speed_kt))
+					+ MainController.fromDoubleToString(Double.parseDouble(data.temp_cMinusDewPoint)) + MainController.fromDoubleToString(Double.parseDouble(data.sky_cover)));
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}

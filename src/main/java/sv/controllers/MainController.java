@@ -1,7 +1,12 @@
 package sv.controllers;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import sv.dataprocess.DataExtractor;
 import sv.dataprocess.DataGetter;
 import sv.dataprocess.WeatherDate;
 import sv.entities.GraphData;
@@ -40,9 +46,8 @@ public class MainController {
 	
 	private static final String PREDICT_COMMAND = "PR";
 	private static final String FEED_COMMAND = "FE";
-	private static final long FEED_FREQ = 3;
-	private static final String PREDICTOR_RESPONSE_OK = "OK";
-	private static final String PREDICTOR_RESPONSE_ERR = "ERR";
+	// Each FEED_FREQ minutes the web server will provide new flights to the predictor
+	private static final long FEED_FREQ = 3*60;
 	
 	private static final String[] PREDICTION_COLOR = { "#33cc33", "#ffff00", "#ff9933", "#ff5050"};
 	private static final String[] PREDICTION_PERIOD = { "0-15 min", "15-30 min", "30-60 min", ">60 min"};
@@ -63,9 +68,7 @@ public class MainController {
 			logger.info("Connected to the predictor");
 			PrintWriter output = new PrintWriter(predictorSocket.getOutputStream(), false);
 			BufferedReader input = new BufferedReader(new InputStreamReader(predictorSocket.getInputStream()));
-			
 			WeatherDate weatherDate = DataGetter.getTimeWheater(""+lon, ""+lat, offsetD, offsetH);
-			
 			// Command
 			output.printf("%s", MainController.PREDICT_COMMAND);
 			output.flush();
@@ -98,7 +101,7 @@ public class MainController {
 	 * @param d Double to convert
 	 * @return 8-char stringified double
 	 */
-	public String fromDoubleToString(double d){
+	public static String fromDoubleToString(double d){
 		String res = Double.toString(d);
 		if (res.length() > 8) res = res.substring(0, 8);
 		else{
@@ -106,7 +109,6 @@ public class MainController {
 				res = "0" + res;
 			}
 		}
-		logger.info(res);
 		return res;
 	}
 	
@@ -117,17 +119,35 @@ public class MainController {
 	 * @param d Int to convert
 	 * @return 8-char stringified int
 	 */
-	public String fromIntToString(int i){
+	public static String fromIntToString(int i){
 		String res = Integer.toString(i);
 		while(res.length() < 8){
 			res = "0" + res;
 		}
-		logger.info(res);
 		return res;
 	}
 	
+	/**
+	 * - If the long has more than 8 digits then it is returned (nothing is done)
+	 * - Otherwise it is converted to a 8-char string in order to send it to the python server,
+	 * prepending zeroes till the string has 8 characters.
+	 * @param d Long to convert
+	 * @return 8-char stringified long
+	 */
+	public static String fromLongToString(long i){
+		String res = Long.toString(i);
+		while(res.length() < 8){
+			res = "0" + res;
+		}
+		return res;
+	}
+	
+	/**
+	 * Processes the predictor response when it is asked for a flight delay prediction
+	 * @param response Response of the predictor
+	 * @return Formatted data to return to the user
+	 */
 	public GraphData[] processPredictorResponse(String response){
-		logger.info(response);
 		GraphData[] res;
 		List<Double> resList = new ArrayList<Double>();
 		String[] resSplit = response.split(" ");
@@ -142,25 +162,66 @@ public class MainController {
 		return res;
 	}
 	
-	//@Async
-	//@Scheduled(fixedRate=FEED_FREQ*1000)
+	@Async
+	@Scheduled(fixedRate=FEED_FREQ*1000)
+	/**
+	 * Provides new information about flights to the predictor
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	public void feedPredictor() throws UnknownHostException, IOException{
+		//File f = new File(DataExtractor.FILE_NAME);
+		//if (f.exists()) f.delete();
 		Socket predictorSocket = new Socket(PREDICTOR_HOST, PREDICTOR_PORT);
 		logger.info("Connected to the predictor");
 		PrintWriter output = new PrintWriter(predictorSocket.getOutputStream(), false);
-		BufferedReader input = new BufferedReader(new InputStreamReader(predictorSocket.getInputStream()));
+		//BufferedReader input = new BufferedReader(new InputStreamReader(predictorSocket.getInputStream()));
 		
 		// Command
 		output.printf("%s", MainController.FEED_COMMAND);
 		output.flush();
+		// Data size
+		//int fileSize = DataExtractor.extractInfo();
+		int fileSize = countLines(DataExtractor.FILE_NAME);
+		output.printf("%s", fromIntToString(fileSize));
+		output.flush();
 		// Data
-
-
-		String response = input.readLine();
-		if (response.equals(PREDICTOR_RESPONSE_OK)) logger.info("Predictor successfully fed");
-		else logger.info("Error while feeding predictor");
+		BufferedReader in = new BufferedReader(new FileReader(DataExtractor.FILE_NAME));
+		String line;
+		while((line = in.readLine()) != null){
+			output.printf("%s", line);
+			output.flush();
+		}
 		
+		in.close();
 		// Close the connection
 		predictorSocket.close();
+	}
+	
+	/**
+	 * Gets the number of lines in a file
+	 * @param filename Name of the file (path)
+	 * @return Number of lines
+	 * @throws IOException
+	 */
+	public static int countLines(String filename) throws IOException {
+	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
+	    try {
+	        byte[] c = new byte[1024];
+	        int count = 0;
+	        int readChars = 0;
+	        boolean empty = true;
+	        while ((readChars = is.read(c)) != -1) {
+	            empty = false;
+	            for (int i = 0; i < readChars; ++i) {
+	                if (c[i] == '\n') {
+	                    ++count;
+	                }
+	            }
+	        }
+	        return (count == 0 && !empty) ? 1 : count;
+	    } finally {
+	        is.close();
+	    }
 	}
 }
