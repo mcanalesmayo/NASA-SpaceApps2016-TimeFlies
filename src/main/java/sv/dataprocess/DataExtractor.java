@@ -1,11 +1,8 @@
 package sv.dataprocess;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -13,27 +10,28 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.github.dvdme.ForecastIOLib.ForecastIO;
 import com.jaunt.Elements;
 import com.jaunt.UserAgent;
 
 public class DataExtractor {
 
+	private static Logger logger = LoggerFactory.getLogger(DataExtractor.class);
+	
 	public static void main(String[] args) {
 
 		PrintWriter pw = null;
 		try {
-
 			if (new File("Features.txt").exists()) {
 				new File("Features.txt").delete();
 			}
@@ -54,12 +52,10 @@ public class DataExtractor {
 		writeData(pw, "KLAS", "LAS", "America/Los_Angeles", "-0700");
 		writeData(pw, "KPDX", "PDX", "America/Phoenix", "-0700");
 
-		System.out.println("fin");
 		pw.close();
 	}
 
-	public static WheatherDate getInfo(URL url) throws Exception {
-
+	public static WeatherDate getInfo(URL url) throws Exception {
 		URLConnection con = url.openConnection();
 
 		InputStream in = con.getInputStream();
@@ -90,7 +86,6 @@ public class DataExtractor {
 					if (eElement.getNodeName().contains("sky_condition")) {
 						Node node = eElement.getAttributes().getNamedItem("sky_cover");
 						sky_cover = node.getNodeValue();
-
 					} else {
 						if (eElement.getNodeName().contains("flight_categor"))
 							flight_categor = eElement.getFirstChild().getNodeValue();
@@ -111,13 +106,13 @@ public class DataExtractor {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.info(e.getMessage());
 				}
 
 			}
 		}
 
-		WheatherDate nuevaDate = new WheatherDate(temp_c, dewpoint_c, wind_dir_degrees, wind_speed_kt,
+		WeatherDate nuevaDate = new WeatherDate(temp_c, dewpoint_c, wind_dir_degrees, wind_speed_kt,
 				visibility_statute_mi, altim_in_hg, sky_cover, flight_categor);
 
 		return nuevaDate;
@@ -167,7 +162,6 @@ public class DataExtractor {
 						campo = campo.replace("PM", "");
 
 						siguienteHora.add(campo);
-						// System.out.println(hora);
 						Integer horaSalidaReal = Integer.valueOf(hora);
 						if (horaSalidaReal <= currentHour) {
 							// si la hora que ha salido o va a salir es la hora
@@ -199,7 +193,6 @@ public class DataExtractor {
 						siguienteHora.add(campo);
 					}
 				}
-
 			}
 
 			String year = String.valueOf(dateAndTime.getYear());
@@ -241,36 +234,24 @@ public class DataExtractor {
 						"https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&startTime="
 								+ timeNow + desfaseHorario + "&endTime=" + timeNow2 + desfaseHorario + "&stationString="
 								+ station);
-				WheatherDate data = getInfo(url);
-				// System.out.println("Dewpoint: "+data.getDewpoint_c());
-				// System.out.println("Retraso: "+retraso);
+				WeatherDate data = getInfo(url);
 				if (retraso < 0) {
 					// sale antes, puede pasar, pero se pone a cero, pues no es
 					// un retraso
 					// y no tiene que ver la causa de salir antes
 					retraso = 0;
-					/*
-					 * System.out.println(supuesta + " " + real);
-					 * System.out.println(
-					 * "http://tracker.flightview.com/FVAccess2/tools/fids/fidsDefault.asp?accCustId=FVWebFids&fidsId=20001&fidsInit=departures&fidsApt="
-					 * + stationVisit + "&fidsFilterAl=&fidsFilterArrap=");
-					 *
-					 */}
+				}
 
 				try {
 					pw.println(retraso + " " + data.temp_c + " " + data.dewpoint_c + " " + data.wind_dir_degrees + " "
 							+ "" + data.wind_speed_kt + " " + data.visibility_statute_mi + " " + data.altim_in_hg + " "
 							+ data.sky_cover + " " + data.flight_categor);
-
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.info(e.getMessage());
 				}
-
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

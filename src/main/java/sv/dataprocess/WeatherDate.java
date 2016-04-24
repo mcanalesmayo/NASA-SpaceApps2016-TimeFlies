@@ -1,6 +1,6 @@
 package sv.dataprocess;
 
-public class WheatherDate {
+public class WeatherDate {
 	String temp_c = "";
 	String dewpoint_c = "";
 	String wind_dir_degrees = "";
@@ -10,7 +10,7 @@ public class WheatherDate {
 	String sky_cover = "";
 	String flight_categor = "";
 
-	public WheatherDate(String temp_c, String dewpoint_c, String wind_dir_degrees, String wind_speed_kt,
+	public WeatherDate(String temp_c, String dewpoint_c, String wind_dir_degrees, String wind_speed_kt,
 			String visibility_statute_mi, String altim_in_hg, String sky_cover, String flight_categor) {
 		super();
 		this.temp_c = temp_c;
@@ -23,7 +23,7 @@ public class WheatherDate {
 		this.flight_categor = flight_categor;
 	}
 
-	public WheatherDate() {
+	public WeatherDate() {
 
 	}
 

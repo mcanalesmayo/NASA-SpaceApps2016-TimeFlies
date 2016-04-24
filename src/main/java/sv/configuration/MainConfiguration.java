@@ -1,7 +1,15 @@
 package sv.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+@Configuration
+@PropertySource(value = { "classpath:network.properties" })
 public class MainConfiguration {
 	
-	public static final String PREDICTOR_HOST = "10.10.11.54";
-	public static final int PREDICTOR_PORT = 50001;
+	@Value("${predictor.host}")
+	public static String PREDICTOR_HOST;
+	@Value("${predictor.host}")
+	public static int PREDICTOR_PORT;
 }
