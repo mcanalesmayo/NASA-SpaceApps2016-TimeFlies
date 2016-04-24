@@ -13,7 +13,7 @@ The server side has been built using the following technologies:
 * Predictor: Python & Scikit-Learn
 * Communication between web server and predictor: sockets
 
-## Client view
+## Client interface
 The client interface has been build using the following technologies:
 * HTML5
 * CSS3
