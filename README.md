@@ -1,11 +1,12 @@
 # NASA-SA-ClearForTakeOff
 
 ## Developers
-* [Marcos Canales Mayo](https://github.com/MarcosCM) 
-* [Jorge Martínez Lascorz](https://github.com/JorgeCoke)
+
 * [Íñigo Alonso Ruiz](https://github.com/Shathe)
 * [Javier Beltrán Jorba](https://github.com/MrJavo94)
+ * [Marcos Canales Mayo](https://github.com/MarcosCM) 
 * [Jorge Cáncer Gil](https://github.com/jorcox)
+* [Jorge Martínez Lascorz](https://github.com/JorgeCoke)
 
 ## Server side
 The server side has been built using the following technologies:
