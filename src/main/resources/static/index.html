@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Script Eden ( http://scripteden.net/ ) Template Builder v2.0.0">
+  <!--pageMeta-->
+
+  <!-- Loading Bootstrap -->
+  <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+
+  <!-- Loading Flat UI -->
+  <link href="css/flat-ui.css" rel="stylesheet">
+
+  <link href="css/style.css" rel="stylesheet">
+
+  <link href="css/style.complete.css" rel="stylesheet">
+
+  <!-- Google Chars -->
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <link href="css/_custom.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <![endif]-->
+
+  <!--headerIncludes-->
+
+
+  <style type="text/css"></style></head>
+  <body>
+    <div id="page" class="page">
+      <div class="item header margin-top-0 padding-bottom-0" id="header4">
+        <header class="wrapper image image2">
+          <div class="bg bg2"></div>
+          <div class="container">
+            <div class="container text-center">
+              <div class="col-sm-10 col-sm-offset-1">
+                <div class="underlined-title">
+                  <div class="editContent">
+                    <h1>Clear Take Off</h1>
+                  </div>
+                  <hr>
+                  <div class="editContent">
+                    <h2>Feel free to fill the form and get your flight delay</h2>
+                  </div>
+                </div>
+                <div class="editContent">
+                  <p>Cras mattis consectetur purus sit amet fermentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam porta sem malesuada magna mollis euismod. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia.</p>
+                </div>
+                <div class="editContent">
+                  <ul class="contact-info">
+                    <li><span class="fa fa-map-marker"></span> Etopía, Zaragoza</li>
+                    <li><span class="fa fa-phone"></span> +34 123456789</li>
+                    <li><span class="fa fa-envelope"></span><a href="mailto:test@cleartakeoff.com"> test@cleartakeoff.com</a> </li>
+                  </ul>
+                </div>
+
+                <div class="form-container">
+                  <form class="forms" action="contact/form-handler.php" method="post">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group">
+                          <input type="text" value="" placeholder="City" class="form-control" id="city">
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="form-group">
+                          <input type="date" value="" placeholder="Date (YYYY-MM-DD)" class="form-control" data-date-format="DD MMMM YYYY" id="date">
+                        </div>
+                      </div>
+                    </div><!-- /.row -->
+                    <div class="form-group">
+                      <div class="editContent">
+                        <p class="small muted" id="msg"></p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <a href="#" class="btn btn-primary btn-lg" onclick="sendData()">Send</a>
+                    </div>
+                  </form>
+                </div><!-- /.form-container -->
+                <div id="chart_wrap"><div id="chart"></div></div>
+                <p id="canvas_size"></p>
+              </div><!-- /.col-sm-10 -->
+            </div><!-- /.container -->
+          </div><!-- /.container -->
+        </header></div><!-- /.wrapper -->
+
+
+
+        <!-- Load JS here for greater good =============================-->
+        <script src="js/jquery-1.8.3.min.js"></script>
+        <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script src="js/jquery.ui.touch-punch.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap-select.js"></script>
+        <script src="js/bootstrap-switch.js"></script>
+        <script src="js/flatui-checkbox.js"></script>
+        <script src="js/flatui-radio.js"></script>
+        <script src="js/jquery.tagsinput.js"></script>
+        <script src="js/jquery.placeholder.js"></script>
+        <script src="js/jquery.nivo.slider.pack.js"></script>
+        <script src="js/application.js"></script>
+        <script src="js/over.js"></script>
+        <script>
+        /*$(function(){
+          if( $('#nivoSlider').size() > 0 ) {
+            $('#nivoSlider').nivoSlider({
+              effect: 'random',
+              pauseTime: 5000
+            });
+          }
+        })*/
+
+        var x = document.getElementById("msg");
+        var ip = "http://10.10.11.37:8080/";
+
+        $(function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+          }
+        })
+        function showPosition(position) {
+          httpGet(position.coords.latitude,position.coords.longitude);
+        }
+
+        function httpGet(lat,lon){
+          $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon, function(data)
+          {
+            console.log(data.results[0].formatted_address);
+            document.getElementById('city').value=data.results[0].address_components[1].long_name;
+          });
+        }
+
+        function checkForm(){
+          // regular expression to match required date format
+          //re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+          re2 = /^\d{4}-\d{1,2}-\d{1,2}$/;
+          console.log(document.getElementById('date').value);
+          if (document.getElementById('date').value.match(re2)){
+            return true;
+          }
+          else{
+            return false;
+          }
+        }
+
+        function sendData(){
+          if(checkForm()){
+            console.log("GO");
+            var url = ip + "predict?city="+document.getElementById('city').value+"&date="+document.getElementById('date').value;
+            console.log(url);
+            x.innerHTML = url;
+            //request http://10.10.11.37:8080/predict?city=asd&date=DD-MM-YYYY
+          }
+          else{
+            x.innerHTML = "Invalid date format";
+          }
+        }
+
+        google.load("visualization", "1", {
+            packages: ["corechart"]
+        });
+        google.setOnLoadCallback(initChart);
+
+        $(window).on("throttledresize", function (event) {
+            initChart();
+        });
+        $(window).resize(function(){
+          initChart();
+        });
+
+        function initChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Element', 'Density', { role: 'style' }],
+            ['Copper', 0.3, '#b87333'],            // RGB value
+            ['Silver', 0.2, 'silver'],            // English color name
+            ['Gold', 0.05, 'gold'],
+            ['Platinum', 0.45, 'color: #e5e4e2' ], // CSS-style declaration
+          ]);
+          var view = new google.visualization.DataView(data);
+          view.setColumns([0, 1,
+            { calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation" },
+            2]);
+            var options = {
+              title: "Minutes of delay , in %",
+              width: '100%',
+              height: '100%',
+              bar: {groupWidth: "70%"},
+              legend: { position: "none" },
+              hAxis: {
+                format: 'percent'
+              },
+              backgroundColor: { fill:'#ffffff' }
+            };
+            drawChart(view, options)
+          }
+
+        function drawChart(view, options) {
+            var chart = new google.visualization.BarChart(document.getElementById('chart'));
+            chart.draw(view, options);
+        }
+
+        </script>
+
+      </body></html>

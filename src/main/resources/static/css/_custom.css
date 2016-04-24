@@ -1,0 +1,19 @@
+#chart_body {
+    width:50%;
+    margin:10% auto;
+    background:#e6e6e6;
+}
+#chart_wrap {
+    border:2px solid gray;
+    position: relative;
+    padding-bottom: 100%;
+    height: 0;
+    overflow:hidden;
+}
+#chart {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:100%;
+    height:100%;
+}
