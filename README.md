@@ -1,5 +1,25 @@
 # NASA-SA-ClearForTakeOff
 
+## Developers
+* [Marcos Canales Mayo](https://github.com/MarcosCM) 
+* [Jorge Martínez Lascorz](https://github.com/JorgeCoke)
+* [Íñigo Alonso Ruiz](https://github.com/Shathe)
+* [Javier Beltrán Jorba](https://github.com/MrJavo94)
+* [Jorge Cáncer Gil](https://github.com/jorcox)
+
+## Server side
+The server side has been built using the following technologies:
+* Web Server: JavaEE & Spring Framework
+* Predictor: Python & Scikit-Learn
+* Communication between web server and predictor: sockets
+
+## Client view
+The client interface has been build using the following technologies:
+* HTML5
+* CSS3
+* Bootstrap
+* Javascript & JQuery
+
 Help/Examples:
 * https://www.aviationweather.gov/adds/metars
 * https://www.aviationweather.gov/static/adds/metars/stations.txt
