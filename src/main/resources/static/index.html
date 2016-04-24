@@ -113,17 +113,27 @@
         <script src="js/over.js"></script>
         <script>
 
+        //Variables
         var x = document.getElementById("msg");
         var ip = "http://10.10.11.37:8080/";
         var lat;
         var lon;
         var d = new Date();
+        var url;
+        var dataTable;
 
+        //Load Google Chart
+        google.load("visualization", "1", {
+          packages: ["corechart"]
+        });
+
+        //Set current Date & Time
         $(function myFunction() {
           document.getElementById('date').value = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
           document.getElementById('time').value = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
         })
 
+        //Get current Location
         $(function getLocation() {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
@@ -136,16 +146,15 @@
           lon = position.coords.longitude;
           httpGet(lat,lon);
         }
-
         function httpGet(lat,lon){
           $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon, function(data)
           {
             var arrAddress = data.results[0].address_components;
-            // iterate through address_component array
+            //Iterate through address_component array
             $.each(arrAddress, function (i, address_component) {
-              if (address_component.types[0] == 'locality'){ // locality type
+              if (address_component.types[0] == 'locality'){ //Locality type
                 document.getElementById('city').value=address_component.long_name + " ("+lat + " , " + lon + ")";
-                return false; // break the loop
+                return false; //Break the loop
               };
             })
           });
@@ -153,7 +162,6 @@
 
         function checkDate(){
           // regular expression to match required date format
-          //re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
           re2 = /^\d{4}-\d{1,2}-\d{1,2}$/;
           console.log(document.getElementById('date').value);
           if (document.getElementById('date').value.match(re2)){
@@ -163,7 +171,6 @@
             return false;
           }
         }
-
         function checkTime(){
           // regular expression to match required time format
           re = /^\d{2}:\d{2}$/;
@@ -176,20 +183,17 @@
           }
         }
 
-        var url;
         function sendData(){
           if(checkDate()){
             if(checkTime()){
               if(lat && lon){
-                console.log("GO");
                 var offsetH = document.getElementById('time').value.substring(0,2) - d.getHours();
-                var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate();
+                var offsetDM = document.getElementById('date').value.substring(5,7) - d.getMonth();
+                var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate() + offsetDM*30;
                 url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
-                console.log(url);
+                x.innerHTML = url;
+                loadData();
                 loadChart();
-                //x.innerHTML = url;
-                //x.innerHTML = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon;
-                //request http://10.10.11.37:8080/predict?city=asd&date=DD-MM-YYYY
               }
               else{
                 console.log('Lay y Lon no existen');
@@ -205,10 +209,6 @@
           }
         }
 
-        google.load("visualization", "1", {
-          packages: ["corechart"]
-        });
-
         function loadChart(){
           initChart();
           //Toogle responsive chart
@@ -220,29 +220,33 @@
           });
         }
 
+        loadData(){
+          $.getJSON(url, function(data){
+            data.unshift(['Element', 'Density', { role: 'style' }]);
+            dataTable = data;
+          })
+        };
+
         function initChart() {
-	       	$.getJSON(url, function(data){
- 	            data.unshift(['Element', 'Density', { role: 'style' }]);
- 	           var view = new google.visualization.DataView(data);
- 	          	view.setColumns([0, 1,
- 	            { calc: "stringify",
- 	            sourceColumn: 1,
- 	            type: "string",
- 	            role: "annotation" },
- 	            2]);
- 	            var options = {
- 	              title: "Minutes of delay , in %",
- 	              width: '100%',
- 	              height: '100%',
- 	              bar: {groupWidth: "70%"},
- 	              legend: { position: "none" },
- 	              hAxis: {
- 	                format: 'percent'
- 	              },
- 	              backgroundColor: { fill:'#ffffff' }
- 	            };
- 	            drawChart(view, options);
- 	          });
+          var view = new google.visualization.DataView(dataTable);
+          view.setColumns([0, 1,
+            { calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation" },
+            2]);
+            var options = {
+              title: "Minutes of delay , in %",
+              width: '100%',
+              height: '100%',
+              bar: {groupWidth: "70%"},
+              legend: { position: "none" },
+              hAxis: {
+                format: 'percent'
+              },
+              backgroundColor: { fill:'#ffffff' }
+            };
+            drawChart(view, options);
           }
 
           function drawChart(view, options) {
