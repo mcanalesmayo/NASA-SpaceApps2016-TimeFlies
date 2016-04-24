@@ -25,7 +25,7 @@ The application is constantly taking data from the internet and updating the bay
 * CSS3
 * Bootstrap
 * JavaScript
-* Scikit Learn - Naive Bayes Clasification Multiclass
+* Scikit Learn - Naive Bayes Multiclass Clasification 
 
 
 ## Server side
