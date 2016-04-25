@@ -48,7 +48,7 @@
                 </div>
                 <div class="editContent">
                   <ul class="contact-info">
-                    <li>Made with <span class="fa fa-heart"></span> by SpaceApps Team</li>
+                    <li>Made with <span class="fa fa-heart"></span> by TimeFlies SpaceApps Team</li>
                     <li><span class="fa fa-map-marker"></span> Etopía, Zaragoza</li>
                     <li><span class="fa fa-phone"></span> +34 123456789</li>
                     <li><span class="fa fa-envelope"></span><a href="mailto:test@clearfortakeoff.com"> test@clearfortakeoff.com</a> </li>
@@ -120,6 +120,7 @@
         var url;
         var dataTable;
         var chartTriggers = 0;
+        var cityPrediction;
 
         //Load Google Chart
         google.load("visualization", "1", {
@@ -133,7 +134,17 @@
           document.getElementById('time').value = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
         })
 
-        //Get current Location
+        //First: Get current Location/City vía IP
+        $(function searchIp(){
+          $.getJSON('http://ip-api.com/json', function(data){
+            document.getElementById('city').value=data.city;
+            cityPrediction=data.city;
+            lat = data.lat;
+            lon = data.lon;
+          })
+        })
+
+        //If Location Enabled: Get current Location/City vía GPS
         $(function getLocation() {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
@@ -147,13 +158,12 @@
           httpGet(lat,lon);
         }
         function httpGet(lat,lon){
-          $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon, function(data)
-          {
+          $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lon, function(data){
             var arrAddress = data.results[0].address_components;
             //Iterate through address_component array
             $.each(arrAddress, function (i, address_component) {
               if (address_component.types[0] == 'locality'){ //Locality type
-                document.getElementById('city').value=address_component.long_name + " ("+lat + " , " + lon + ")";
+                document.getElementById('city').value=address_component.long_name;
                 return false; //Break the loop
               };
             })
@@ -184,16 +194,34 @@
         function sendData(){
           if(checkDate()){
             if(checkTime()){
-              if(lat && lon){
-              	x.innerHTML = "";
+              if(document.getElementById('city').value != ""){
+                //If city != null
+                x.innerHTML = "";
                 var offsetH = document.getElementById('time').value.substring(0,2) - d.getHours();
                 var offsetDM = document.getElementById('date').value.substring(5,7) - (d.getMonth()+1);
                 var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate() + offsetDM*30;
-                url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
-                loadData();
+                if(lat && lon  && (document.getElementById('city').value==cityPrediction)){
+                  //city not modified by user
+                  url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
+                  loadData();
+                }
+                else{
+                  //city modified by user
+                  $.getJSON('http://api.geonames.org/searchJSON?q='+document.getElementById('city').value+'&maxRows=1&username=jorgecoke', function(data){
+                    if(data.geonames[0].lat && data.geonames[0].lng){
+                      lat = data.geonames[0].lat;
+                      lon = data.geonames[0].lng;
+                      url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
+                      loadData();
+                    }
+                    else{
+                      x.innerHTML = "Unable to find user location. Please, enable location";
+                    }
+                  })
+                }
               }
               else{
-                x.innerHTML = "Enable location";
+                x.innerHTML = "Please, fill City data";
               }
             }
             else{
