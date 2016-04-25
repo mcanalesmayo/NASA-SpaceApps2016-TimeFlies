@@ -46,7 +46,7 @@ public class MainController {
 	// Each FEED_FREQ minutes the web server will provide new flights to the predictor
 	private static final long FEED_FREQ = 3*60;
 	
-	private static final String[] PREDICTION_COLOR = { "#a6f655", "#f6f655", "#f6a655", "#f6605"};
+	private static final String[] PREDICTION_COLOR = { "#a6f655", "#f6f655", "#f6a655", "#ff4d4d"};
 	private static final String[] PREDICTION_PERIOD = { "0-5 min", "5-30 min", "30-60 min", ">60 min"};
 	
 	/**

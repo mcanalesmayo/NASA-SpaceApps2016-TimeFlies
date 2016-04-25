@@ -17,10 +17,6 @@
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <link href="css/_custom.css" rel="stylesheet">
 
-  <!-- Autocomplete -->
-  <script src="//<a href="http://www.jqueryscript.net/tags.php?/map/">map</a>s.googleapis.com/maps/api/js?libraries=places"></script>
-  <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
   <!--[if lt IE 9]>
   <script src="js/html5shiv.js"></script>
@@ -33,7 +29,7 @@
   <body>
     <div id="page" class="page">
       <div class="item header margin-top-0 padding-bottom-0" id="header4">
-        <header class="wrapper image image2">
+        <header class="wrapper image image2" id="image">
           <div class="bg bg2"></div>
           <div class="container">
             <div class="container text-center">
@@ -89,8 +85,6 @@
                   </form>
                 </div><!-- /.form-container -->
 
-                <p id="demo"></p>
-
                 <div id="chart_wrap"><div id="chart"></div></div>
                 <p id="canvas_size"></p>
 
@@ -131,6 +125,7 @@
         google.load("visualization", "1", {
           packages: ["corechart"]
         });
+        google.setOnLoadCallback(initBaseChart);
 
         //Set current Date & Time
         $(function myFunction() {
@@ -194,6 +189,7 @@
                 var offsetDM = document.getElementById('date').value.substring(5,7) - (d.getMonth()+1);
                 var offsetD = document.getElementById('date').value.substring(8,10) - d.getDate() + offsetDM*30;
                 url = ip + "predict?lat="+lat+"&lon="+lon+"&offsetH="+offsetH+"&offsetD="+offsetD;
+                $( "#chart_wrap" ).fadeIn();
                 loadData();
               }
               else{
@@ -252,7 +248,10 @@
               bar: {groupWidth: "70%"},
               legend: { position: "none" },
               hAxis: {
-                format: 'percent'
+                format: 'percent',
+                viewWindow:{
+                min:0.0
+              }
               },
               backgroundColor: { fill:'#ffffff' }
             };
@@ -262,6 +261,18 @@
           function drawChart(view, options) {
             var chart = new google.visualization.BarChart(document.getElementById('chart'));
             chart.draw(view, options);
+          }
+
+          //Paint Base chart
+          function initBaseChart(){
+            dataTable = google.visualization.arrayToDataTable([
+            ['Minutes', 'Percentage', { role: 'style' }],
+            ['>60 min', 0.0, 'black'],
+            ['30-45 min', 0.0, 'black'],
+            ['15-30 min', 0.0, 'black'],
+            ['0-15 min', 0.0, 'black' ],
+          ]);
+          loadChart();
           }
 
           </script>
