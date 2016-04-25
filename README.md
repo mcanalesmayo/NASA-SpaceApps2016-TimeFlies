@@ -13,6 +13,9 @@ Our application predicts the likelihood of flight delays given the airport locat
 
 The application is constantly taking data from the internet and updating the bayesian model in order to keep learning forever.
 
+[Slides] (http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza)
+
+
 ## Resources
 * Python
 * JavaEE
@@ -21,7 +24,7 @@ The application is constantly taking data from the internet and updating the bay
 * Forecast.io
 * NOAA (METAR)
 * National Weather Service
-* flightview tracker
+* Flightview tracker
 * HTML5
 * CSS3
 * Bootstrap
@@ -41,10 +44,6 @@ The client interface has been build using the following technologies:
 * CSS3
 * Bootstrap
 * Javascript & JQuery
-
-## Slides
-http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza
-
 
 ## Notes
 The python project has been included in this project. It's the _predictor_ folder
