@@ -13,7 +13,7 @@ Our application predicts the likelihood of flight delays given the airport locat
 
 The application is constantly taking data from the internet and updating the bayesian model in order to keep learning forever.
 
-Please, check our [slides] (http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza)
+Please, check our [slides] (http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza).
 
 
 ## Resources
