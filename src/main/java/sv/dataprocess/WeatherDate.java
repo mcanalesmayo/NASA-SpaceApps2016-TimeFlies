@@ -1,9 +1,13 @@
 package sv.dataprocess;
 
+/**
+*  Features Class
+*/
 public class WeatherDate {
 	String temp_cMinusDewPoint = "";
 	String wind_speed_kt = "";
 	String sky_cover = "";
+
 
 	public WeatherDate( String wind_speed_kt,String temp_cMinusDewPoint, String sky_cover) {
 		super();
@@ -16,6 +20,9 @@ public class WeatherDate {
 
 	}
 
+	/**
+	*  Getters and Setters
+	*/
 	public String getTemp_cMinusDewPoint() {
 		return temp_cMinusDewPoint;
 	}

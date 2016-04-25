@@ -28,11 +28,11 @@ import sv.controllers.MainController;
 public class DataExtractor {
 
 	public static final String FILE_NAME = "Features.txt";
-	
+
 	/**
 	 * Extracts information about new flights and saves it to FILE_NAME
 	 * @return Size (bytes) of the file
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static int extractInfo() throws IOException {
 		PrintWriter pw = null;
@@ -43,6 +43,9 @@ public class DataExtractor {
 			}
 			pw = new PrintWriter(new FileWriter(f));
 		} catch (Exception e) {}
+		// We take data of some airports
+		// The key is to have a database with every airport and its codes
+		// In order to automatize it
 		writeData(pw, "KJFK", "JFK", "America/New_York", "-0400");
 		writeData(pw, "KLAX", "LAX", "America/Los_Angeles", "-0700");
 		writeData(pw, "KMIA", "MIA", "America/Chicago", "-0500");
@@ -56,24 +59,23 @@ public class DataExtractor {
 		writeData(pw, "KDTW", "DTW", "America/New_York", "-0400");
 		writeData(pw, "KLAS", "LAS", "America/Los_Angeles", "-0700");
 		writeData(pw, "KPDX", "PDX", "America/Phoenix", "-0700");
-		
+
 		pw.close();
-		
+
 		return MainController.countLines(DataExtractor.FILE_NAME);
 	}
 
 	public static WeatherDate getInfo(URL url) throws Exception {
 		URLConnection con = url.openConnection();
-
 		InputStream in = con.getInputStream();
 
 		String temp_c = "";
 		String dewpoint_c = "";
 		String wind_dir_degrees = "";
 		String wind_speed_kt = "";
-		// String visibility_statute_mi = "";
 		String sky_cover = "";
 
+		// Let's parse the weather information
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(in);
@@ -130,37 +132,38 @@ public class DataExtractor {
 		return new WeatherDate(wind_speed_kt, String.valueOf(temp_roc), cloud);
 	}
 
+	/**
+	* Writes in the pw file the features needed of every flight of the station
+	* We only took (real time) information of the flights if their real departure time
+	* is lower or equals than the current hour
+	*/
 	public static void writeData(PrintWriter pw, String station, String stationVisit, String zoneid,
 			String desfaseHorario) {
 		try {
 			Instant now = Instant.now();
-			ZoneId zoneId = ZoneId.of(zoneid);// Los_Angeles //-7
+			ZoneId zoneId = ZoneId.of(zoneid);
 			ZonedDateTime dateAndTime = ZonedDateTime.ofInstant(now, zoneId);
-			int currentHour = dateAndTime.getHour(); // los angeles
+			int currentHour = dateAndTime.getHour();
 			UserAgent userAgent = new UserAgent(); // create new userAgent
-													// (headless browser)
+
 			userAgent
 					.visit("http://tracker.flightview.com/FVAccess2/tools/fids/fidsDefault.asp?accCustId=FVWebFids&fidsId=20001&fidsInit=departures&fidsApt="
 							+ stationVisit + "&fidsFilterAl=&fidsFilterArrap="); // visit
-			// google
-			// userAgent.doc.apply("butterflies"); //apply form input (starting
-			// at first editable field)
-			// userAgent.doc.submit("Google Search"); //click submit button
-			// labelled "Google Search"
 
-			Elements links = userAgent.doc.findEvery("<td>");// .findEvery("<a>");
-																// //find search
-																// result links
+
+			Elements links = userAgent.doc.findEvery("<td>");
 			boolean siguiente = false;
 			ArrayList<ArrayList<String>> horas = new ArrayList<>();
 			ArrayList<String> siguienteHora = new ArrayList<>();
 
+			//Get the needed info
+
 			for (com.jaunt.Element link : links) {
-				String campo = link.getText();// &nbsp;AM
+				String campo = link.getText();
 
 				if (siguiente) {
 					if ((campo.contains(";PM") || campo.contains(";AM"))) {
-						// hora real salida
+						// Real departure time
 						campo = campo.replace("&nbsp;", "");
 
 						String hora = campo.split(":")[0];
@@ -176,9 +179,6 @@ public class DataExtractor {
 						siguienteHora.add(campo);
 						Integer horaSalidaReal = Integer.valueOf(hora);
 						if (horaSalidaReal <= currentHour) {
-							// si la hora que ha salido o va a salir es la hora
-							// actual o menor, se peude anadir para
-							// aprendizaje
 							horas.add(siguienteHora);
 						}
 					}
@@ -187,7 +187,7 @@ public class DataExtractor {
 				} else {
 					siguiente = false;
 					if (campo.contains(";PM") || campo.contains(";AM")) {
-						// hora scheduled salida
+						//  scheduled departure time
 
 						String hora = campo.split(":")[0];
 						campo = campo.replace("&nbsp;", "");
@@ -207,11 +207,12 @@ public class DataExtractor {
 				}
 			}
 
+			//Parse info for the API
 			String year = String.valueOf(dateAndTime.getYear());
 			String month = String.valueOf(dateAndTime.getMonthValue());
 			if (month.length() == 1)
 				month = "0" + month;
-			// ayer
+
 			String day = String.valueOf(dateAndTime.getDayOfMonth() - 2);
 			if (day.length() == 1)
 				day = "0" + day;
@@ -248,9 +249,8 @@ public class DataExtractor {
 								+ station);
 				WeatherDate data = getInfo(url);
 				if (retraso < 0) {
-					// sale antes, puede pasar, pero se pone a cero, pues no es
-					// un retraso
-					// y no tiene que ver la causa de salir antes
+					// This case, the flight has taken off earlier than expected
+					// we took as if it's 0 time delay
 					retraso = 0;
 				}
 
