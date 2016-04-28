@@ -35,3 +35,17 @@ The client interface has been build using the following technologies:
 
 ## Notes
 The python project has been included in the [predictor](predictor) folder of this project.
+
+## Deployment instructions
+The server needs the following tools to be run:
+* Java 8
+* Gradle >=2.12
+* Python >=2.7.9
+* Scikit-Learn 0.17.1
+
+The following commands will run the application:
+
+```#We will assume we are in the application directory```
+```cd predictor```
+```cd predictor```
+```cd predictor```
