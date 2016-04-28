@@ -47,8 +47,8 @@ The following commands will run the application:
 ```
 #We will assume we are in the application directory
 cd predictor
-nohup python complete.py &
+nohup python complete.py >/dev/null 2>&1 &
 cd ..
-nohup gradle run &
+nohup gradle run >/dev/null 2>&1 &
 ```
 The web server will now be listening on port 8080.
