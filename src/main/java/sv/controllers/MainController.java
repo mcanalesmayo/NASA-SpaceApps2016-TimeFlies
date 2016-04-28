@@ -182,8 +182,10 @@ public class MainController {
 		BufferedReader in = new BufferedReader(new FileReader(DataExtractor.FILE_NAME));
 		String line;
 		while((line = in.readLine()) != null){
-			output.printf("%s", line);
-			output.flush();
+			if (!line.isEmpty() && !line.equals("\n")){
+				output.printf("%s", line);
+				output.flush();
+			}
 		}
 		
 		in.close();
