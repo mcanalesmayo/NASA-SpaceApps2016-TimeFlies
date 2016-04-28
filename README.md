@@ -45,7 +45,7 @@ The server needs the following tools to be run:
 
 The following commands will run the application:
 ```
-#We will assume we are in the application directory
+git clone https://github.com/MarcosCM/NASA-SpaceApps2016-TimeFlies.git
 cd predictor
 nohup python complete.py >/dev/null 2>&1 &
 cd ..
