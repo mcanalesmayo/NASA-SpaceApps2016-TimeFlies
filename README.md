@@ -1,7 +1,6 @@
 # NASA-SA-ClearForTakeOff
 
 ## Developers
-
 * [Íñigo Alonso Ruiz](https://github.com/Shathe)
 * [Javier Beltrán Jorba](https://github.com/MrJavo94)
 * [Marcos Canales Mayo](https://github.com/MarcosCM) 
@@ -13,29 +12,18 @@ Our application predicts the likelihood of flight delays given the airport locat
 
 The application is constantly taking data from the internet and updating the bayesian model in order to keep learning forever.
 
-Please, check out our [slides] (http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza).
-
+Please, check out our [slides](http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza).
 
 ## Resources
-* Python
-* JavaEE
-* Spring Framework
-* Gradle
 * Forecast.io
-* NOAA (METAR)
+* NOAA
 * National Weather Service
 * Flightview tracker
-* HTML5
-* CSS3
-* Bootstrap
-* JavaScript
-* Scikit Learn - Naive Bayes Multiclass Clasification 
-
 
 ## Server side
 The server side has been built using the following technologies:
-* Web Server: JavaEE & Spring Framework
-* Predictor: Python & Scikit-Learn
+* Web Server: JavaEE, Spring Framework & Gradle
+* Predictor: Python & Scikit-Learn - Naive Bayes Multiclass Clasification
 * Communication between web server and predictor: sockets
 
 ## Client interface
@@ -46,7 +34,7 @@ The client interface has been build using the following technologies:
 * Javascript & JQuery
 
 ## Notes
-The python project has been included in this project. It's the _predictor_ folder
+The python project has been included in the [predictor](predictor) folder of this project.
 
 Help/Examples:
 * https://www.aviationweather.gov/adds/metars
