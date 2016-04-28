@@ -46,8 +46,13 @@ The server needs the following tools to be run:
 The following commands will run the application:
 
 ```#We will assume we are in the application directory```
+
 ```cd predictor```
+
 ```nohup python complete.py &```
+
 ```cd ..```
+
 ```nohup gradle run &```
+
 The web server will now be listening on port 8080.
