@@ -3,6 +3,8 @@
 /gradle/
 /gradlew
 /gradlew.bat
+/predictor/dump.pkl*
+/predictor/Features.txt
 /.gradle/
 /.settings/
 /.classpath
