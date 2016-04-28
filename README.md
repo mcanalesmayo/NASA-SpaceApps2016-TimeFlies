@@ -42,6 +42,8 @@ The server needs the following tools to be run:
 * Gradle >=2.12
 * Python >=2.7.9
 * Scikit-Learn 0.17.1
+* python-numpy
+* python-scipy
 
 The following commands will run the application:
 ```
