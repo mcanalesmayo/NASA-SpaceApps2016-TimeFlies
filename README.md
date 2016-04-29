@@ -14,6 +14,8 @@ The application is constantly taking data from the internet and updating the bay
 
 Please, check out our [slides](http://es.slideshare.net/JorgeCncerGil/timeflies-spaceapps-nasa-zaragoza).
 
+You can also use the application following this [link](http://52.28.76.182:8080/).
+
 ## Resources
 * Forecast.io
 * NOAA
